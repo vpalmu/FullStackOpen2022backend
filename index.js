@@ -56,7 +56,7 @@ app.use(unknownEndpoint)
 //
 
 console.log('process.env.port:', process.env.port)
-const PORT = process.env.port || 3001
+const PORT = process.env.PORT || 3001
 
 
 // start the application
