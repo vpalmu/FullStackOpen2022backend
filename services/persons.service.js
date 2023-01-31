@@ -1,3 +1,5 @@
+// Implements simple in-memory storage for Person data
+// used for early development before Mongo DF.
 
 let persons = [
     { 

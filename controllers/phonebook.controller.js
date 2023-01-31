@@ -1,6 +1,7 @@
 
 const ps = require('../services/persons.service')
 const utils = require('../utils/helper.util')
+const Person = require('../models/person')
 
 async function getInfo(req, res) {
     try {
@@ -13,9 +14,12 @@ async function getInfo(req, res) {
 
 async function getAll(req, res, next) {
     try {
-        res.json(ps.allPersons())   
+        Person.find({}).then(persons => {
+            console.log(persons)
+            res.json(persons)
+            })
     } catch (err) {
-        console.error(`Error while getting info`, err.message)
+        console.error(`Error while getting all persons`, err.message)
         next(err)
     }
 }
