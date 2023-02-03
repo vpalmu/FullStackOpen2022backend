@@ -102,19 +102,16 @@ async function createPerson(request, response, next) {
         }
 
         // check if person with same name exists
-        Person.exists({ name: body.name}, function(err, person) {
-            if (err) {
-                console.log(err)
-                return response.status(500).end() 
-            } else {
-                if (person === true) {
-                    const message = `person already exists, name: ${request.body.name}`
-                    console.log(message)
-                    response.statusMessage = message
-                    return response.status(400).end()  // bad request
-                }
-            }
-        })
+        const sameNameExists = await Person.exists({ name: 'Testi Jamppa4' });
+        console.log(sameNameExists);
+        
+        if (sameNameExists) {
+            const message = `person already exists, name: ${request.body.name}`
+            console.log(message)
+            response.statusMessage = message
+            return response.status(400).end()  // bad request
+        }
+        
 
         const newPerson = new Person(
             {
