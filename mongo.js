@@ -1,4 +1,8 @@
-// helper file for testing connectivity with Mongo DB
+// This code is a helper file for testing connectivity with Mongo DB. 
+// It checks the number of arguments passed to it and if the correct number of arguments are passed, 
+// it will either add a new person to the database or print out all the people in the database. 
+// If not enough or too many arguments are passed, it will exit with an error message.
+//
 // to run the code: node mongo <Passworkd>
 //              or: node mongo <Passworkd> Testi-Jamppa 9289827
 const mongoose = require('mongoose')
