@@ -10,7 +10,8 @@
     "build:ui": "del /s /q build && cd ../FullStackOpen2022/part2/phonebook/ && npm run build && robocopy build C:/FullStackOpen2022backend/build /s",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
-    "logs:prod": "fly logs"
+    "logs:prod": "fly logs",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
   },
   "homepage": "https://github.com/vpalmu/FullStackOpen2022backend#readme",
   "devDependencies": {
+    "eslint": "^8.33.0",
     "nodemon": "^2.0.20"
   },
   "dependencies": {
