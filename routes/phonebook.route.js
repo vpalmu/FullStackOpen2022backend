@@ -1,6 +1,6 @@
-const express = require('express');
-const router = express.Router();
-const phonebookController = require('../controllers/phonebook.controller');
+const express = require('express')
+const router = express.Router()
+const phonebookController = require('../controllers/phonebook.controller')
 
 router.get('/info', phonebookController.getInfo)
 router.get('/api/persons', phonebookController.getAll)

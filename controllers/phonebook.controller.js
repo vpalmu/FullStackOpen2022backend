@@ -7,10 +7,10 @@ async function getInfo(req, res, next) {
     try {
         Person.countDocuments({}, (err, count) => {
             res.send(`<p>Phonebook has info for ${count} people</p>
-                  <p>${utils.getCurrentTimestamp()}</p>`)    
+                  <p>${utils.getCurrentTimestamp()}</p>`)
         })
     } catch (err) {
-        console.error(`Error while getting info`, err.message)
+        console.error('`Error while getting info', err.message)
         next(err) // if next is not called, client won't receive error data, and will timeout eventually
     }
 }
@@ -19,9 +19,9 @@ async function getAll(req, res, next) {
     try {
         Person.find({}).then(persons => {
             res.json(persons)
-            })
+        })
     } catch (err) {
-        console.error(`Error while getting all persons`, err.message)
+        console.error('Error while getting all persons', err.message)
         next(err)
     }
 }
@@ -53,30 +53,30 @@ async function getPerson(req, res, next) {
                 next(error) // pass errors to express
             })
     } catch (err) {
-        console.error(`Error while getting person`, err.message)
+        console.error('Error while getting person', err.message)
         next(err)
-}
+    }
 }
 
 async function deletePerson(req, res, next) {
     try {
         console.log('request.params.id', req.params.id)
-        
+
         Person.findByIdAndRemove(req.params.id)
             .then(result => {
                 if (result) {
-                    console.log(`person was deleted`)
+                    console.log('person was deleted')
                     return res.status(204).end()
                 }
-                console.log(`person not found, id: ${req.params.id}`)
-                res.statusMessage = `person doesn't exist`
+                console.log(''`person not found, id: ${req.params.id}`)
+                res.statusMessage = 'person doesn\'t exist'
                 return res.status(404).end()  // resource not found
             })
             .catch(err => {
                 next(err)
             })
     } catch (err) {
-        console.error(`Error while deleting person`, err.message)
+        console.error('Error while deleting person', err.message)
         next(err)
     }
 }
@@ -92,8 +92,8 @@ async function createPerson(request, response, next) {
         }
 
         // check if person with same name exists
-        const sameNameExists = await Person.exists({ name: body.name });
-        
+        const sameNameExists = await Person.exists({ name: body.name })
+
         if (sameNameExists) {
             const message = `person '${request.body.name}' already exists`
             console.log(message)
@@ -110,17 +110,17 @@ async function createPerson(request, response, next) {
 
         newPerson
             .save().then(
-                    result => {
-                        console.log('added entry for new person', newPerson.name)
-                        return response.json(newPerson)
-                    }
-                )   
-                .catch(err => {
-                    next(err)
-                })
-    } 
+                result => {
+                    console.log('added entry for new person', newPerson.name)
+                    return response.json(newPerson)
+                }
+            )
+            .catch(err => {
+                next(err)
+            })
+    }
     catch (err) {
-        console.error(`Error while deleting person`, err.message)
+        console.error('`Error while deleting person', err.message)
         next(err)
     }
 }
@@ -135,7 +135,6 @@ async function updatePerson(request, response, next) {
         }
 
         const personToUpdate = ps.createNewPersonObject(body.name, body.number)
-        const opts = { runValidators: true };
 
         Person.findByIdAndUpdate(request.params.id, personToUpdate, { new: true, runValidators: true })
             .then(result => {
@@ -145,22 +144,22 @@ async function updatePerson(request, response, next) {
                 }
 
                 console.log(`person not found, id: ${request.params.id}`)
-                response.statusMessage = `person doesn't exist`
+                response.statusMessage = 'person doesn\'t exist'
                 return response.status(404).end()  // resource not found
             })
             .catch(err => next(err))
     }
     catch (err) {
-        console.error(`Error while deleting person`, err.message)
+        console.error('`Error while deleting person', err.message)
         next(err)
     }
 }
 
-module.exports = { 
-    getInfo, 
-    getAll, 
-    getPerson, 
-    deletePerson, 
+module.exports = {
+    getInfo,
+    getAll,
+    getPerson,
+    deletePerson,
     createPerson,
     updatePerson
 }

@@ -8,7 +8,7 @@ function getRandomPersonId(max) {
 }
 
 function isEmptyObject(obj) {
-    return !Object.keys(obj).length;
+    return !Object.keys(obj).length
 }
 
 module.exports = { getCurrentTimestamp, getRandomPersonId, isEmptyObject }

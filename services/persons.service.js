@@ -1,14 +1,14 @@
 // simple service class
 
 function createNewPersonObject(pName, pNumber) {
-  const newPerson = { 
-      name: pName, 
-      number: pNumber 
-  }
+    const newPerson = {
+        name: pName,
+        number: pNumber
+    }
 
-  return newPerson
+    return newPerson
 }
 
 module.exports = {
-  createNewPersonObject
+    createNewPersonObject
 }
