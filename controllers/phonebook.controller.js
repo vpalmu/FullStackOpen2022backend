@@ -91,27 +91,15 @@ async function createPerson(request, response, next) {
             return response.status(400).json({ error: 'content missing' })
         }
 
-        // validate name field
-        if (!body.name || body.name.length === 0) {
-            return response.status(400).json({ error: 'name missing' })
-        }
-
-        // validate number field
-        if (!body.number || body.number.length === 0) {
-            return response.status(400).json({ error: 'number missing' })
-        }
-
         // check if person with same name exists
-        const sameNameExists = await Person.exists({ name: 'Testi Jamppa4' });
-        console.log(sameNameExists);
+        const sameNameExists = await Person.exists({ name: body.name });
         
         if (sameNameExists) {
-            const message = `person already exists, name: ${request.body.name}`
+            const message = `person '${request.body.name}' already exists`
             console.log(message)
             response.statusMessage = message
             return response.status(400).end()  // bad request
         }
-        
 
         const newPerson = new Person(
             {
@@ -121,16 +109,15 @@ async function createPerson(request, response, next) {
         )
 
         newPerson
-            .save()
-            .then(
-                result => {
-                    console.log('added entry for new person', newPerson.name)
-                    return response.json(newPerson)
-                }
-            )
-            .catch(err => {
-                next(err)
-            })
+            .save().then(
+                    result => {
+                        console.log('added entry for new person', newPerson.name)
+                        return response.json(newPerson)
+                    }
+                )   
+                .catch(err => {
+                    next(err)
+                })
     } 
     catch (err) {
         console.error(`Error while deleting person`, err.message)
@@ -147,19 +134,10 @@ async function updatePerson(request, response, next) {
             return response.status(400).json({ error: 'content missing' })
         }
 
-        // validate name field
-        if (!body.name || body.name.length === 0) {
-            return response.status(400).json({ error: 'name missing' })
-        }
-
-        // validate number field
-        if (!body.number || body.number.length === 0) {
-            return response.status(400).json({ error: 'number missing' })
-        }
-
         const personToUpdate = ps.createNewPersonObject(body.name, body.number)
+        const opts = { runValidators: true };
 
-        Person.findByIdAndUpdate(request.params.id, personToUpdate, { new: true })
+        Person.findByIdAndUpdate(request.params.id, personToUpdate, { new: true, runValidators: true })
             .then(result => {
                 if (result) {
                     console.log('update result:', result)
