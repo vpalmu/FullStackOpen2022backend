@@ -6,11 +6,12 @@
 // to run the code: node mongo <Passworkd>
 //              or: node mongo <Passworkd> Testi-Jamppa 9289827
 const mongoose = require('mongoose')
+const logger = require('./utils/logger')
 
-console.log('Args:', process.argv)
+logger.info('Args:', process.argv)
 
 if (process.argv.length<3) {
-    console.log('give password as argument')
+    logger.info('give password as argument')
     process.exit(1)
 }
 
@@ -22,19 +23,19 @@ let newPersonNumber = ''
 
 
 if (process.argv.length === 4) {
-    console.log('too few arguments, can\'t add new person')
+    logger.info('too few arguments, can\'t add new person')
     process.exit(1)
 }
 
 if (process.argv.length === 5) {
-    console.log('trying to add new person..')
+    logger.info('trying to add new person..')
     addNewPerson = true
     newPersonName = process.argv[3]
     newPersonNumber = process.argv[4]
 }
 
 if (process.argv.length>5) {
-    console.log('too many arguments')
+    logger.info('too many arguments')
     process.exit(1)
 }
 
@@ -61,23 +62,23 @@ personSchema.set('toJSON', {
 const Person = mongoose.model('Person', personSchema)
 
 if (addNewPerson === true) {
-    console.log('add new person..')
+    logger.info('add new person..')
     const newPerson = new Person({
         name: newPersonName,
         number: newPersonNumber,
     })
 
     newPerson.save().then(result => {
-        console.log('person saved!')
+        logger.info('person saved!')
         mongoose.connection.close()
     })
 }
 else {
-    console.log('phonebook:')
+    logger.info('phonebook:')
 
     Person.find({}).then(result => {
         result.forEach(person => {
-            console.log(`${person.name} ${person.number}`)
+            logger.info(`${person.name} ${person.number}`)
         })
         mongoose.connection.close()
     })

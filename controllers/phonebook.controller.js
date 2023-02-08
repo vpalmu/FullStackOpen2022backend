@@ -2,6 +2,7 @@
 const ps = require('../services/persons.service')
 const utils = require('../utils/helper.util')
 const Person = require('../models/person')
+const logger = require('../utils/logger')
 
 async function getInfo(req, res, next) {
     try {
@@ -10,7 +11,7 @@ async function getInfo(req, res, next) {
                   <p>${utils.getCurrentTimestamp()}</p>`)
         })
     } catch (err) {
-        console.error('`Error while getting info', err.message)
+        logger.error('`Error while getting info', err.message)
         next(err) // if next is not called, client won't receive error data, and will timeout eventually
     }
 }
@@ -21,7 +22,7 @@ async function getAll(req, res, next) {
             res.json(persons)
         })
     } catch (err) {
-        console.error('Error while getting all persons', err.message)
+        logger.error('Error while getting all persons', err.message)
         next(err)
     }
 }
@@ -33,42 +34,42 @@ async function getPerson(req, res, next) {
         //throw new Error('this is a test')
 
         const id = req.params.id
-        console.log('find by Id:', id)
+        logger.info('find by Id:', id)
         Person.findById(id)
             .then(person => {
                 if (person) {
-                    console.log('Person found:',person.name)
+                    logger.info('Person found:',person.name)
                     res.json(person)
                 } else {
                     // 'undefined' value
                     const errMessage = `person with id: ${req.params.id} doesn't exist`
 
-                    console.log(errMessage)
+                    logger.info(errMessage)
                     res.statusMessage = errMessage
                     res.status(404).end()  // resource not found
                 }
             })
             .catch(error => {
-                console.log(error)
+                logger.info(error)
                 next(error) // pass errors to express
             })
     } catch (err) {
-        console.error('Error while getting person', err.message)
+        logger.error('Error while getting person', err.message)
         next(err)
     }
 }
 
 async function deletePerson(req, res, next) {
     try {
-        console.log('request.params.id', req.params.id)
+        logger.info('request.params.id', req.params.id)
 
         Person.findByIdAndRemove(req.params.id)
             .then(result => {
                 if (result) {
-                    console.log('person was deleted')
+                    logger.info('person was deleted')
                     return res.status(204).end()
                 }
-                console.log(''`person not found, id: ${req.params.id}`)
+                logger.info(''`person not found, id: ${req.params.id}`)
                 res.statusMessage = 'person doesn\'t exist'
                 return res.status(404).end()  // resource not found
             })
@@ -76,7 +77,7 @@ async function deletePerson(req, res, next) {
                 next(err)
             })
     } catch (err) {
-        console.error('Error while deleting person', err.message)
+        logger.error('Error while deleting person', err.message)
         next(err)
     }
 }
@@ -85,7 +86,7 @@ async function createPerson(request, response, next) {
     try {
         // data is expected to be in JSON format, must set 'Content-Type=application/json' in PostMan 'Headers'
         const body = request.body
-        console.log('body', body)
+        logger.info('body', body)
 
         if (utils.isEmptyObject(body)) {
             return response.status(400).json({ error: 'content missing' })
@@ -96,7 +97,7 @@ async function createPerson(request, response, next) {
 
         if (sameNameExists) {
             const message = `person '${request.body.name}' already exists`
-            console.log(message)
+            logger.info(message)
             response.statusMessage = message
             return response.status(400).end()  // bad request
         }
@@ -111,7 +112,7 @@ async function createPerson(request, response, next) {
         newPerson
             .save().then(
                 result => {
-                    console.log('added entry for new person', newPerson.name)
+                    logger.info('added entry for new person', newPerson.name)
                     return response.json(newPerson)
                 }
             )
@@ -120,7 +121,7 @@ async function createPerson(request, response, next) {
             })
     }
     catch (err) {
-        console.error('`Error while deleting person', err.message)
+        logger.error('`Error while deleting person', err.message)
         next(err)
     }
 }
@@ -139,18 +140,18 @@ async function updatePerson(request, response, next) {
         Person.findByIdAndUpdate(request.params.id, personToUpdate, { new: true, runValidators: true })
             .then(result => {
                 if (result) {
-                    console.log('update result:', result)
+                    logger.info('update result:', result)
                     return response.json(result)
                 }
 
-                console.log(`person not found, id: ${request.params.id}`)
+                logger.info(`person not found, id: ${request.params.id}`)
                 response.statusMessage = 'person doesn\'t exist'
                 return response.status(404).end()  // resource not found
             })
             .catch(err => next(err))
     }
     catch (err) {
-        console.error('`Error while deleting person', err.message)
+        logger.error('`Error while deleting person', err.message)
         next(err)
     }
 }

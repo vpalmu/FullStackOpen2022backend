@@ -1,8 +1,9 @@
+const logger = require('./utils/logger')
 
 // use PORT from .env file only when running locally, in production, Fly.io defines the PORT
 // dynamically via it's own environment variable
 if (process.env.NODE_ENV !== 'production') {
-    console.log('development environment..')
+    logger.info('development environment..')
     require('dotenv').config()
 }
 
@@ -32,7 +33,7 @@ app.use(express.json())             // activate the json-parser for POST request
 const morgan = require('morgan')                            // request logger middleware
 morgan.token('request-log', function(req, res) {
     if (req.method === 'POST' && req.url === '/api/persons') {
-        console.log('morgal request-log: POST /api/persons ', req.body.name)
+        logger.info('morgal request-log: POST /api/persons ', req.body.name)
 
         return JSON.stringify({
             number: req.body.number
@@ -57,7 +58,7 @@ app.use('/', phoneBookRouter)
 
 // route for unknown endpoints
 const unknownEndpoint = (request, response) => {
-    console.log('error: \'unknown endpoint\'')
+    logger.info('error: \'unknown endpoint\'')
     response.status(404).send({ error: 'unknown endpoint' })
 }
 app.use(unknownEndpoint)
@@ -66,7 +67,7 @@ app.use(unknownEndpoint)
 // Error handlers
 //
 const errorHandler = (error, request, response, next) => {
-    console.error(error.message)
+    logger.error(error.message)
 
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
@@ -91,11 +92,11 @@ app.use(errorHandler)
 //
 //     PATH in environment -> PATH in .env file -> default 3001
 //
-console.log('process.env.port:', process.env.port)
+logger.info('process.env.port:', process.env.port)
 const PORT = process.env.PORT || 3001
 
 // start the application
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-    console.log(`open: http://localhost:${PORT}`)
+    logger.info(`Server running on port ${PORT}`)
+    logger.info(`open: http://localhost:${PORT}`)
 })
