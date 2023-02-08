@@ -1,13 +1,12 @@
 const mongoose = require('mongoose') // import mongoose Object Data Modeling (ODM) library
 const logger = require('../utils/logger')
+const { MONGODB_URI } = require('../utils/config')
+
 mongoose.set('strictQuery', false)
+logger.info('connecting to', MONGODB_URI)
 
-const url = process.env.MONGODB_URI
-
-logger.info('connecting to', url)
-
-mongoose.connect(url)
-    .then(result => {
+mongoose.connect(MONGODB_URI)
+    .then(_ => {
         logger.info('connected to MongoDB')
     })
     .catch((error) => {

@@ -1,11 +1,5 @@
 const logger = require('./utils/logger')
-
-// use PORT from .env file only when running locally, in production, Fly.io defines the PORT
-// dynamically via it's own environment variable
-if (process.env.NODE_ENV !== 'production') {
-    logger.info('development environment..')
-    require('dotenv').config()
-}
+const { PORT }  = require('./utils/config')
 
 //--------------------------------------------------
 const express = require('express')  // import express and create 'express' function
@@ -54,6 +48,7 @@ app.get('/', (req, res) => {
 
 // phone book routes
 const phoneBookRouter = require('./routes/phonebook.route') // routes
+
 app.use('/', phoneBookRouter)
 
 // route for unknown endpoints
@@ -83,20 +78,8 @@ const errorHandler = (error, request, response, next) => {
 // this has to be the last loaded middleware.
 app.use(errorHandler)
 
-//--------------------------------------------------
-// - try to get value for PORT
-//   - if api is not running in production, process.env.port tries to read it from enviroment variable
-//      - if environment variable is not defined, try to read it from .env file
-//   - if app is running in production, Fly.io will try to read it only from environment variable (because dotenv is not in use)
-//   - in either case, if PORT does not have the value defined, default to 3001
-//
-//     PATH in environment -> PATH in .env file -> default 3001
-//
-logger.info('process.env.port:', process.env.port)
-const PORT = process.env.PORT || 3001
-
 // start the application
 app.listen(PORT, () => {
     logger.info(`Server running on port ${PORT}`)
-    logger.info(`open: http://localhost:${PORT}`)
+    logger.info(`open in broswer: http://localhost:${PORT}`)
 })
