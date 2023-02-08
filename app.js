@@ -1,9 +1,9 @@
-const logger = require('./utils/logger')
 const express = require('express')                          // import express and create 'express' function
 const app = express()                                       // create express application with 'express' function
 const cors = require('cors')                                // cors middleware
 const morgan = require('morgan')                            // request logger middleware
 const phoneBookRouter = require('./routes/phonebook.route') // routes
+const middleware = require('./utils/middleware')
 
 app.use(cors())
 
@@ -15,61 +15,23 @@ app.use(cors())
 // GET requests to the address www.serversaddress.com/api/notes will be handled by the backend's code.
 //
 app.use(express.static('build'))    // load 'build' folder as a static content (frontend app production version compiled)
-
 app.use(express.json())             // activate the json-parser for POST requests
 
 //--------------------------------------------------
 // Middleware functions have to be taken into use before routes if we want them to be executed before the route event handlers are called
 //
-morgan.token('request-log', function(req, res) {
-    if (req.method === 'POST' && req.url === '/api/persons') {
-        logger.info('morgal request-log: POST /api/persons ', req.body.name)
-
-        return JSON.stringify({
-            number: req.body.number
-        })
-    }
-
-    return '- agent: ' + req.headers['user-agent']
-})
-
-app.use(morgan(':method :url :status - :response-time ms :request-log'))
+morgan.token('request-log', middleware.requestLogger)
+app.use(morgan(middleware.requestLoggerParams))
 
 //--------------------------------------------------
 // route for site root
-//
-app.get('/', (req, res) => {
-    res.send('<h1>Hello World from Backend API root, API is now running...</h1>')
-})
-
+app.get('/', (req, res) => { res.send('<h1>Hello World from Backend API root, API is now running...</h1>') })
 // phone book routes
 app.use('/', phoneBookRouter)
-
 // route for unknown endpoints
-const unknownEndpoint = (request, response) => {
-    logger.info('error: \'unknown endpoint\'')
-    response.status(404).send({ error: 'unknown endpoint' })
-}
-app.use(unknownEndpoint)
-
-//--------------------------------------------------
-// Error handlers
-//
-const errorHandler = (error, request, response, next) => {
-    logger.error(error.message)
-
-    if (error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformatted id' })
-    }
-
-    if (error.name === 'ValidationError') {
-        return response.status(400).json({ error: error.message })
-    }
-
-    next(error)
-}
+app.use(middleware.unknownEndpoint)
 
 // this has to be the last loaded middleware.
-app.use(errorHandler)
+app.use(middleware.errorHandler)
 
 module.exports = app
